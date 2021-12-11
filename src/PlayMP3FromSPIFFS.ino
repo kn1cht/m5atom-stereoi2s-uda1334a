@@ -1,4 +1,4 @@
-#include <Arduino.h>
+#include <M5Atom.h> // Changed from #include <Arduino.h>
 #ifdef ESP32
   #include <WiFi.h>
   #include "SPIFFS.h"
@@ -18,7 +18,7 @@
 
 AudioGeneratorMP3 *mp3;
 AudioFileSourceSPIFFS *file;
-AudioOutputI2SNoDAC *out;
+AudioOutputI2S *out; // Changed from AudioOutputI2SNoDAC *out;
 AudioFileSourceID3 *id3;
 
 
@@ -53,10 +53,11 @@ void setup()
   Serial.printf("Sample MP3 playback begins...\n");
 
   audioLogger = &Serial;
-  file = new AudioFileSourceSPIFFS("/pno-cs.mp3");
+  file = new AudioFileSourceSPIFFS("/pno-cs-pan.mp3");
   id3 = new AudioFileSourceID3(file);
   id3->RegisterMetadataCB(MDCallback, (void*)"ID3TAG");
-  out = new AudioOutputI2SNoDAC();
+  out = new AudioOutputI2S(); // Changed from out = new AudioOutputI2SNoDAC();
+  out->SetPinout(19, 33, 22); // Added
   mp3 = new AudioGeneratorMP3();
   mp3->begin(id3, out);
 }
